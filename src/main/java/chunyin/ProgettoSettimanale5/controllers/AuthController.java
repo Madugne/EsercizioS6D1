@@ -1,4 +1,4 @@
-package chunyin.ProgettoSettimanale5.config;
+package chunyin.ProgettoSettimanale5.controllers;
 
 import chunyin.ProgettoSettimanale5.exceptions.BadRequestException;
 import chunyin.ProgettoSettimanale5.payloads.*;
@@ -17,7 +17,7 @@ public class AuthController {
     private AuthService authService;
 
     @Autowired
-    private EmployeeService usersService;
+    private EmployeeService employeeService;
 
     @PostMapping("/login")
     public EmployeeLoginResposeDTO login(@RequestBody EmployeeLoginDTO payload){
@@ -30,7 +30,7 @@ public class AuthController {
         if(validation.hasErrors()) {
             throw new BadRequestException(validation.getAllErrors());
         }
-        return new NewEmployeeRespDTO(this.usersService.saveEmployee(body).getId());
+        return new NewEmployeeRespDTO(this.employeeService.saveEmployee(body).getId());
     }
 
 }

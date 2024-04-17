@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,6 +26,9 @@ public class EmployeeService {
     @Autowired
     private Cloudinary cloudinaryUploader;
 
+    @Autowired
+    private PasswordEncoder bcrypt;
+
     public Page<Employee> getEmployees(int page, int size, String sortBy){
         if(size > 50) size = 50;
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
@@ -36,7 +40,7 @@ public class EmployeeService {
                 employee -> {throw new BadRequestException("L'email " + employee.getEmail() + " è già in uso");
                 }
         );
-        Employee newEmployee = new Employee(body.name(), body.surname(), body.email(), body.password(),
+        Employee newEmployee = new Employee(body.name(), body.surname(), body.email(), bcrypt.encode(body.password()),
                 "https://ui-avatars.com/api/?name="+ body.name() + "+" + body.surname());
         return employeeRepository.save(newEmployee);
     }

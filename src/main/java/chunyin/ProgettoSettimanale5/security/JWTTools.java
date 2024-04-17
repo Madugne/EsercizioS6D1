@@ -18,7 +18,7 @@ public class JWTTools {
     public String createToken(Employee user){
         return Jwts.builder().issuedAt(
                         new Date(System.currentTimeMillis())).expiration(
-                        new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)).subject(
+                        new Date(System.currentTimeMillis() + 1000 * 60 * 60)).subject(
                         String.valueOf(user.getId())).signWith(Keys.hmacShaKeyFor(secret.getBytes())).compact();
     }
 
@@ -32,4 +32,10 @@ public class JWTTools {
         }
 
     }
+    public String extractIdFromToken(String token){
+        return Jwts.parser()
+                .verifyWith(Keys.hmacShaKeyFor(secret.getBytes()))
+                .build().parseSignedClaims(token).getPayload().getSubject();
+    }
+
 }
